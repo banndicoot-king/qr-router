@@ -1,5 +1,5 @@
 require("dotenv").config();
-const Logger = require("./logger")("EDCH", "index");
+const Logger = require("./logger")("QR_SERVER", "index");
 const { SERVER } = require("@ajayos/server");
 const express = require("express");
 const requestIp = require("request-ip");
