@@ -1,8 +1,4 @@
-lightbox.option({
-  resizeDuration: 200,
-  wrapAround: true,
-  disableScrolling: true,
-});
+
 document.addEventListener("DOMContentLoaded", function () {
   var splide = new Splide(".splide", {
     type: "loop",
@@ -104,4 +100,11 @@ function play_pause(btn) {
 audio.addEventListener("ended", () => {
   audio.currentTime = 0;
   audio.play();
+});
+
+
+lightbox.option({
+  resizeDuration: 200,
+  wrapAround: true,
+  disableScrolling: true,
 });
