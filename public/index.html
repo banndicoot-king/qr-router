@@ -102,19 +102,22 @@
 
   <body>
     <a
-      class="hide"
-      id="play_button"
-      data-status="play"
-      onclick="play_pause(this)"
-      href="javascript:void(0)"
-    >
-      <div id="audio_control" class="pause"></div>
-    </a>
-    <input
-      type="hidden"
-      id="song_url"
-      value="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/songs/marry-your-daughter.mp3"
-    />
+    class="hide"
+    id="play_button"
+    data-status="play"
+    onclick="play_pause(this)"
+    href="javascript:void(0)"
+  >
+    <div id="audio_control" class="pause"></div>
+  </a>
+  
+  <input
+    type="hidden"
+    id="song_url"
+    value="./wedd.opus"
+  />
+  
+  <audio id="player" src="./wedd.opus" preload="auto"></audio>
 
     <!-- start page  -->
     <section

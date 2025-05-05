@@ -53,7 +53,7 @@ lightbox.option({
         };
     
         // REPLACE URL with your actual API endpoint
-        fetch("https://amrutha.up.railway.app/api/add-number", {
+        fetch("/api/add-number", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
@@ -86,4 +86,25 @@ lightbox.option({
       })
       .show();
   }
+
+
+  const audio = document.getElementById("player");
+
+  function play_pause(btn) {
+    if (audio.paused) {
+      audio.play();
+      btn.dataset.status = "pause";
+      document.getElementById("audio_control").className = "play";
+    } else {
+      audio.pause();
+      btn.dataset.status = "play";
+      document.getElementById("audio_control").className = "pause";
+    }
+  }
+
+  // Loop the song on end
+  audio.addEventListener("ended", () => {
+    audio.currentTime = 0;
+    audio.play();
+  });
   
