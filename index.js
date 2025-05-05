@@ -33,10 +33,7 @@ class APP extends SERVER {
       "TelegramBot",
       "Google-PageRenderer",
       "LinkedInBot",
-      "Pinterest/0.2",
-      "Mozilla/5.0 (Macintosh; Intel Mac OS X)",
-      "Mozilla/5.0 (X11; Ubuntu; Linux i686; rv:24.0)",
-      "Mozilla/5.0 (Linux; Android 10;",
+      "Pinterest/0.2"
     ];
   }
 
@@ -58,6 +55,7 @@ class APP extends SERVER {
 
   // Initialize middleware and database connection
   async init() {
+    this.use(express.static('public'))
     this.use(express.json());
     this.use(requestIp.mw());
     this.use(express.urlencoded({ extended: true }));
@@ -123,7 +121,7 @@ class APP extends SERVER {
       });
 
       Logger.debug("✅ Visitor info saved");
-      return res.sendFile(path.join(__dirname, "index.html"))
+      return res.sendFile(path.join(__dirname, "public", "index.html"))
     } catch (error) {
       Logger.saveLog("handleRoutes Error", "error", error);
       return res.status(500).send("Internal Server Error");
