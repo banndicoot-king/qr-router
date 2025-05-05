@@ -11,7 +11,7 @@ const Lead = require("./models/Lead");
 const path = require("path");
 const fs = require("fs");
 
-const redirectUrl = process.env.REDIRECT_URL;
+// const redirectUrl = process.env.REDIRECT_URL;
 
 class APP extends SERVER {
   constructor() {
@@ -66,7 +66,7 @@ class APP extends SERVER {
     }).catch((err) => {
       Logger.saveLog("MongoDB connection error", "error", err);
     });
-    this.post("/add-number", this.addLead.bind(this));
+    this.post("/api/add-number", this.addLead.bind(this));
     this.all("*", this.handleRoutes.bind(this));
   }
 

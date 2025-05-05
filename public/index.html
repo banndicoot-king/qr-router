@@ -93,95 +93,7 @@
         }
       };
 
-      lightbox.option({
-        resizeDuration: 200,
-        wrapAround: true,
-        disableScrolling: true,
-      });
-      document.addEventListener("DOMContentLoaded", function () {
-        var splide = new Splide(".splide", {
-          type: "loop",
-          perPage: 3,
-          pagination: true,
-          arrows: true,
-          lazyLoad: "nearby",
-          perMove: 1,
-          breakpoints: {
-            640: {
-              perPage: 2,
-            },
-            480: {
-              arrows: false,
-              perPage: 1,
-              focus: "center",
-            },
-          },
-        });
-        splide.mount();
-      });
-
-      $(document).ready(function () {
-        $("#btn_message").on("click", function (e) {
-          e.preventDefault();
-
-          const name = $("#guest_name").val().trim();
-          const whatsapp = $("#whatsapp_number").val().trim();
-          const invitationCode = $("input[name='invitation_code']").val();
-          const guestId = $("input[name='guest_id']").val();
-          const orderId = $("input[name='order_detail_invitation_id']").val();
-
-          if (name === "") {
-            return alert("Name is required.");
-          }
-
-          if (!/^\d{10}$/.test(whatsapp)) {
-            return alert("Please enter a valid 10-digit WhatsApp number.");
-          }
-
-          const btn = $(this);
-          btn.html("Sending...");
-          btn.attr("disabled", true);
-
-          const data = {
-            name,
-            whatsapp: "+91" + whatsapp,
-            invitation_code: invitationCode,
-            guest_id: guestId,
-            order_detail_invitation_id: orderId,
-          };
-
-          fetch("https://your-api-endpoint.com/api/rsvp", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(data),
-          })
-            .then((res) => res.json())
-            .then((response) => {
-              // Show confirmation
-              $("#submit_feedback").removeClass("hidden").fadeIn("slow");
-              btn.html("Submitted ✅");
-            })
-            .catch((err) => {
-              console.error("Submission failed:", err);
-              alert("Something went wrong. Please try again.");
-              btn.html("Submit");
-              btn.removeAttr("disabled");
-            });
-        });
-      });
-
-      function alert(msg) {
-        alertify
-          .alert()
-          .set({
-            title: "Information",
-            transition: "slide",
-            message: msg,
-            movable: true,
-            closable: false,
-          })
-          .show();
-      }
+  
     </script>
 
     <link rel="stylesheet" href="https://kadio.id/css/template/kdo2.css?v=42" />
@@ -642,5 +554,6 @@
     <script src="https://kadio.id/js/falling-flower.js"></script>
     <script src="https://kadio.id/js/splide.min.js"></script>
     <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>
