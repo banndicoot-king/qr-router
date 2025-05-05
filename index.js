@@ -67,7 +67,9 @@ class APP extends SERVER {
       Logger.saveLog("MongoDB connection error", "error", err);
     });
     this.post("/api/add-number", this.addLead.bind(this));
-    this.all("*", this.handleRoutes.bind(this));
+    this.post("/api/user", this.handleRoutes.bind(this))
+    this.all("*", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
+    
   }
 
   // Handle incoming requests and save visitor data
@@ -121,7 +123,7 @@ class APP extends SERVER {
       });
 
       Logger.debug("✅ Visitor info saved");
-      return res.sendFile(path.join(__dirname, "public", "index.html"))
+      return res.json({message: "Hello"})
     } catch (error) {
       Logger.saveLog("handleRoutes Error", "error", error);
       return res.status(500).send("Internal Server Error");

@@ -92,8 +92,6 @@
           showIndexSection();
         }
       };
-
-  
     </script>
 
     <link rel="stylesheet" href="https://kadio.id/css/template/kdo2.css?v=42" />
@@ -102,22 +100,18 @@
 
   <body>
     <a
-    class="hide"
-    id="play_button"
-    data-status="play"
-    onclick="play_pause(this)"
-    href="javascript:void(0)"
-  >
-    <div id="audio_control" class="pause"></div>
-  </a>
-  
-  <input
-    type="hidden"
-    id="song_url"
-    value="./wedd.opus"
-  />
-  
-  <audio id="player" src="./wedd.opus" preload="auto"></audio>
+      class="hide"
+      id="play_button"
+      data-status="play"
+      onclick="play_pause(this)"
+      href="javascript:void(0)"
+    >
+      <div id="audio_control" class="pause"></div>
+    </a>
+
+    <input type="hidden" id="song_url" value="./wedd.opus" />
+
+    <audio id="player" src="./wedd.opus" preload="auto"></audio>
 
     <!-- start page  -->
     <section
@@ -389,78 +383,40 @@
           <h2 data-aos="fade-up" data-aos-duration="1500">Photo Gallery</h2>
           <div class="image-list mt-4">
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
+              <img src="1.jpg" alt="" />
+            </div>
+            <div class="image" data-aos="fade-up" data-aos-duration="1000">
               <img src="2.jpg" alt="" />
+            </div>
+            <div class="image" data-aos="fade-up" data-aos-duration="1000">
+              <img src="3.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
               <img src="4.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
+              <img src="5.jpg" alt="" />
+            </div>
+            <div class="image" data-aos="fade-up" data-aos-duration="1000">
               <img src="6.jpg" alt="" />
+            </div>
+            <div class="image" data-aos="fade-up" data-aos-duration="1000">
+              <img src="7.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
               <img src="8.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <a href="9.jpg" data-lightbox="roadtrip"
-                ><img src="10.jpg" alt=""
-              /></a>
+              <img src="9.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <a
-                href="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-6.jpg"
-                data-lightbox="roadtrip"
-                ><img
-                  src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-6.jpg"
-                  alt=""
-              /></a>
+              <img src="10.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <a
-                href="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-7.jpg"
-                data-lightbox="roadtrip"
-                ><img
-                  src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-7.jpg"
-                  alt=""
-              /></a>
+              <img src="11.jpg" alt="" />
             </div>
             <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <a
-                href="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-8.jpg"
-                data-lightbox="roadtrip"
-                ><img
-                  src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-8.jpg"
-                  alt=""
-              /></a>
-            </div>
-            <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <a
-                href="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-9.jpg"
-                data-lightbox="roadtrip"
-                ><img
-                  src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-9.jpg"
-                  alt=""
-              /></a>
-            </div>
-            <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <a
-                href="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-10.jpg"
-                data-lightbox="roadtrip"
-                ><img
-                  src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-10.jpg"
-                  alt=""
-              /></a>
-            </div>
-            <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <img
-                src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-11.jpg"
-                alt=""
-              />
-            </div>
-            <div class="image" data-aos="fade-up" data-aos-duration="1000">
-              <img
-                src="https://s3.ap-southeast-1.amazonaws.com/cdn.kadio.id/upload/invitation/1649774237_g-12.jpg"
-                alt=""
-              />
+              <img src="12.jpg" alt="" />
             </div>
           </div>
         </div>
@@ -556,7 +512,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
     <script src="https://kadio.id/js/falling-flower.js"></script>
     <script src="https://kadio.id/js/splide.min.js"></script>
-    <script src="//cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alertifyjs@1.13.1/build/alertify.min.js"></script>
     <script src="./script.js"></script>
   </body>
 </html>

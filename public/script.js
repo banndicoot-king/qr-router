@@ -1,5 +1,41 @@
 
+
+async function getUserInfo() {
+  const userInfoKey = 'userInfo';
+  const storedUserInfo = localStorage.getItem(userInfoKey);
+
+  if (storedUserInfo) {
+    console.log('User info found in localStorage:', JSON.parse(storedUserInfo));
+    return JSON.parse(storedUserInfo);
+  }
+
+  try {
+    const response = await fetch('/api/user', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({}) // Add payload here if required
+    });
+
+   if (!response.ok) {
+      throw new Error('Failed to fetch user info');
+    }
+
+    const data = await response.json();
+    localStorage.setItem(userInfoKey, JSON.stringify(data));
+    return data;
+  } catch (error) {
+    console.error('Error fetching user info:', error);
+    return null;
+  }
+}
+
+// Call the function
+getUserInfo();
+
 document.addEventListener("DOMContentLoaded", function () {
+
   var splide = new Splide(".splide", {
     type: "loop",
     perPage: 3,
