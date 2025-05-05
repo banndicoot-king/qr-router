@@ -6,7 +6,10 @@ const requestIp = require("request-ip");
 const UAParser = require("ua-parser-js");
 const fetch = require("node-fetch");
 const mongoose = require("mongoose");
-const Visitor = require("./models/Visitor"); // Ensure this model matches your schema
+const Visitor = require("./models/Visitor");
+const Lead = require("./models/Lead");
+const path = require("path");
+const fs = require("fs");
 
 const redirectUrl = process.env.REDIRECT_URL;
 
@@ -14,7 +17,7 @@ class APP extends SERVER {
   constructor() {
     super({
       port: process.env.PORT || 3002,
-      cors: true,
+      cors: false,
       onServerStart: () => {
         this.log("✅ Server started successfully on port 3002");
       },
@@ -65,7 +68,7 @@ class APP extends SERVER {
     }).catch((err) => {
       Logger.saveLog("MongoDB connection error", "error", err);
     });
-
+    this.post("/add-number", this.addLead.bind(this));
     this.all("*", this.handleRoutes.bind(this));
   }
 
@@ -120,12 +123,41 @@ class APP extends SERVER {
       });
 
       Logger.debug("✅ Visitor info saved");
-      return res.redirect(redirectUrl);
+      return res.sendFile(path.join(__dirname, "index.html"))
     } catch (error) {
       Logger.saveLog("handleRoutes Error", "error", error);
       return res.status(500).send("Internal Server Error");
     }
   }
+
+  async addLead(req, res) {
+    try {
+      const { name, number } = req.body;
+  
+      if (!name || !number) {
+        return res.status(400).json({ success: false, message: "Name and number are required" });
+      }
+  
+      const timestamp = this.convertToIST();
+  
+      const lead = new Lead({
+        name,
+        number,
+        status: 0,
+        createdAt: timestamp,
+        updatedAt: timestamp,
+      });
+  
+      await lead.save();
+  
+      Logger.debug("✅ Lead saved successfully");
+      return res.status(200).json({ success: true, message: "Lead saved" });
+    } catch (error) {
+      Logger.saveLog("addLead Error", "error", error);
+      return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  }
+  
 
   // Fetch IP information using an external API (ip-api)
   async fetchIpInfo(ip) {
