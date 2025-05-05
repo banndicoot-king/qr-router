@@ -1,41 +1,40 @@
-
-
+// Get user info from localStorage or backend
 async function getUserInfo() {
-  const userInfoKey = 'userInfo';
+  const userInfoKey = "userInfo";
   const storedUserInfo = localStorage.getItem(userInfoKey);
 
   if (storedUserInfo) {
-    console.log('User info found in localStorage:', JSON.parse(storedUserInfo));
+    console.log("User info found in localStorage:", JSON.parse(storedUserInfo));
     return JSON.parse(storedUserInfo);
   }
 
   try {
-    const response = await fetch('/api/user', {
-      method: 'POST',
+    const response = await fetch("/api/user", {
+      method: "POST",
       headers: {
-        'Content-Type': 'application/json'
+        "Content-Type": "application/json",
       },
-      body: JSON.stringify({}) // Add payload here if required
+      body: JSON.stringify({}), // Add required payload if needed
     });
 
-   if (!response.ok) {
-      throw new Error('Failed to fetch user info');
+    if (!response.ok) {
+      throw new Error("Failed to fetch user info");
     }
 
     const data = await response.json();
     localStorage.setItem(userInfoKey, JSON.stringify(data));
     return data;
   } catch (error) {
-    console.error('Error fetching user info:', error);
+    console.error("Error fetching user info:", error);
     return null;
   }
 }
 
-// Call the function
+// Call on page load
 getUserInfo();
 
+// SPLIDE Carousel Init
 document.addEventListener("DOMContentLoaded", function () {
-
   var splide = new Splide(".splide", {
     type: "loop",
     perPage: 3,
@@ -57,6 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
   splide.mount();
 });
 
+// jQuery Form Submit Handler
 $(document).ready(function () {
   $("#btn_message").on("click", function (e) {
     e.preventDefault();
@@ -84,7 +84,6 @@ $(document).ready(function () {
       number: "+91" + whatsapp,
     };
 
-    // REPLACE URL with your actual API endpoint
     fetch("/api/add-number", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -92,7 +91,6 @@ $(document).ready(function () {
     })
       .then((res) => res.json())
       .then((response) => {
-        // Show confirmation
         $("#submit_feedback").removeClass("hidden").fadeIn("slow");
         btn.html("Submitted ✅");
       })
@@ -105,6 +103,7 @@ $(document).ready(function () {
   });
 });
 
+// Custom alert using AlertifyJS
 function alert(msg) {
   alertify
     .alert()
@@ -118,27 +117,43 @@ function alert(msg) {
     .show();
 }
 
-const audio = document.getElementById("player");
+// Audio Controls
+const audio2 = document.getElementById("player");
 
 function play_pause(btn) {
-  if (audio.paused) {
-    audio.play();
+  if (audio2.paused) {
+    audio2.play();
     btn.dataset.status = "pause";
     document.getElementById("audio_control").className = "play";
   } else {
-    audio.pause();
+    audio2.pause();
     btn.dataset.status = "play";
     document.getElementById("audio_control").className = "pause";
   }
 }
 
 // Loop the song on end
-audio.addEventListener("ended", () => {
-  audio.currentTime = 0;
-  audio.play();
+audio2.addEventListener("ended", () => {
+  audio2.currentTime = 0;
+  audio2.play();
 });
 
+// Pause on tab change, resume on return
+document.addEventListener("visibilitychange", function () {
+  if (document.hidden) {
+    if (!audio2.paused) {
+      audio2.pause();
+      audio2.dataset.shouldResume = "true";
+    }
+  } else {
+    if (audio2.dataset.shouldResume === "true") {
+      audio2.play();
+      audio2.dataset.shouldResume = "false";
+    }
+  }
+});
 
+// Lightbox init
 lightbox.option({
   resizeDuration: 200,
   wrapAround: true,
