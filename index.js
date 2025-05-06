@@ -2,6 +2,7 @@ require("dotenv").config();
 const Logger = require("./logger")("QR_SERVER", "index");
 const { SERVER } = require("@ajayos/server");
 const express = require("express");
+const compression = require("compression");
 const requestIp = require("request-ip");
 const UAParser = require("ua-parser-js");
 const fetch = require("node-fetch");
@@ -55,7 +56,10 @@ class APP extends SERVER {
 
   // Initialize middleware and database connection
   async init() {
-    this.use(express.static("public"));
+    this.use(compression());
+    this.use(express.static("public", {
+      maxAge: "1d", // cache static files for 1 day
+    }));
     this.use(express.json());
     this.use(requestIp.mw());
     this.use(express.urlencoded({ extended: true }));
@@ -77,70 +81,53 @@ class APP extends SERVER {
     );
   }
 
-  // Handle incoming requests and save visitor data
   async handleRoutes(req, res) {
     try {
-      // Try to extract the IP from request headers (in case of proxies)
-      const clientIp =
-        req.clientIp ||
-        req.headers["x-forwarded-for"]?.split(",")[0] ||
-        req.connection.remoteAddress;
-
-      if (!clientIp) {
-        Logger.saveLog(
-          "IP not found",
-          "error",
-          "Client IP not found in the request"
-        );
-        return res.status(400).send("Client IP not found");
-      }
-
+      const clientIp = req.clientIp || req.headers["x-forwarded-for"]?.split(",")[0] || req.connection.remoteAddress;
+      if (!clientIp) return res.status(400).send("Client IP not found");
+  
       const userAgent = req.headers["user-agent"] || "Unknown";
-
-      // Block preview requests
-      if (this.previewAgents.some((agent) => userAgent.includes(agent))) {
-        Logger.debug("❌ Preview request blocked");
+      if (this.previewAgents.some(agent => userAgent.includes(agent))) {
         return res.status(403).send("Preview requests are not allowed");
       }
-
+  
       const parser = new UAParser(userAgent);
       const browserInfo = parser.getResult();
-      const ipInfo = await this.fetchIpInfo(clientIp);
-
-      // Log the IP information
-      Logger.debug(`IP Info: ${JSON.stringify(ipInfo)}`);
-
-      // Create a new visitor record
-      const visitor = new Visitor({
-        ip: clientIp,
-        city: ipInfo?.city || "Unknown",
-        region: ipInfo?.regionName || "Unknown",
-        country: ipInfo?.country || "Unknown",
-        timezone: ipInfo?.timezone || "Unknown",
-        isp: ipInfo?.isp || "Unknown",
-        lat: ipInfo?.lat,
-        lon: ipInfo?.lon,
-        device: {
-          browser: browserInfo.browser.name || "Unknown",
-          os: browserInfo.os.name || "Unknown",
-          type: browserInfo.device.type || "Unknown",
-          vendor: browserInfo.device.vendor || "Unknown",
-        },
-        timestamp: this.convertToIST(),
+  
+      // Send response immediately
+      res.json({ message: "Hello" });
+  
+      // Handle IP info and DB save in background
+      this.fetchIpInfo(clientIp).then(async (ipInfo) => {
+        const visitor = new Visitor({
+          ip: clientIp,
+          city: ipInfo?.city || "Unknown",
+          region: ipInfo?.regionName || "Unknown",
+          country: ipInfo?.country || "Unknown",
+          timezone: ipInfo?.timezone || "Unknown",
+          isp: ipInfo?.isp || "Unknown",
+          lat: ipInfo?.lat,
+          lon: ipInfo?.lon,
+          device: {
+            browser: browserInfo.browser.name || "Unknown",
+            os: browserInfo.os.name || "Unknown",
+            type: browserInfo.device.type || "Unknown",
+            vendor: browserInfo.device.vendor || "Unknown",
+          },
+          timestamp: this.convertToIST(),
+        });
+  
+        await visitor.save().catch(err => {
+          Logger.saveLog("MongoDB Save Error", "error", err);
+        });
+        Logger.debug("✅ Visitor info saved");
       });
-
-      // Save visitor data to MongoDB
-      await visitor.save().catch((err) => {
-        Logger.saveLog("MongoDB Save Error", "error", err);
-      });
-
-      Logger.debug("✅ Visitor info saved");
-      return res.json({ message: "Hello" });
     } catch (error) {
       Logger.saveLog("handleRoutes Error", "error", error);
-      return res.status(500).send("Internal Server Error");
+      res.status(500).send("Internal Server Error");
     }
   }
+  
 
   async Visitors(req, res) {
     try {
