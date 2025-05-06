@@ -33,7 +33,7 @@ class APP extends SERVER {
       "TelegramBot",
       "Google-PageRenderer",
       "LinkedInBot",
-      "Pinterest/0.2"
+      "Pinterest/0.2",
     ];
   }
 
@@ -55,31 +55,43 @@ class APP extends SERVER {
 
   // Initialize middleware and database connection
   async init() {
-    this.use(express.static('public'))
+    this.use(express.static("public"));
     this.use(express.json());
     this.use(requestIp.mw());
     this.use(express.urlencoded({ extended: true }));
 
     // MongoDB connection
-    await mongoose.connect(process.env.MONGO_URI, {}).then(() => {
-      Logger.info("📦 MongoDB connected");
-    }).catch((err) => {
-      Logger.saveLog("MongoDB connection error", "error", err);
-    });
+    await mongoose
+      .connect(process.env.MONGO_URI, {})
+      .then(() => {
+        Logger.info("📦 MongoDB connected");
+      })
+      .catch((err) => {
+        Logger.saveLog("MongoDB connection error", "error", err);
+      });
     this.post("/api/add-number", this.addLead.bind(this));
-    this.post("/api/user", this.handleRoutes.bind(this))
-    this.all("*", (req, res) => res.sendFile(path.join(__dirname, "public", "index.html")));
-    
+    this.post("/api/user", this.handleRoutes.bind(this));
+    this.post("/api/visitors", this.Visitors.bind(this));
+    this.all("*", (req, res) =>
+      res.sendFile(path.join(__dirname, "public", "index.html"))
+    );
   }
 
   // Handle incoming requests and save visitor data
   async handleRoutes(req, res) {
     try {
       // Try to extract the IP from request headers (in case of proxies)
-      const clientIp = req.clientIp || req.headers["x-forwarded-for"]?.split(",")[0] || req.connection.remoteAddress;
+      const clientIp =
+        req.clientIp ||
+        req.headers["x-forwarded-for"]?.split(",")[0] ||
+        req.connection.remoteAddress;
 
       if (!clientIp) {
-        Logger.saveLog("IP not found", "error", "Client IP not found in the request");
+        Logger.saveLog(
+          "IP not found",
+          "error",
+          "Client IP not found in the request"
+        );
         return res.status(400).send("Client IP not found");
       }
 
@@ -118,28 +130,69 @@ class APP extends SERVER {
       });
 
       // Save visitor data to MongoDB
-      await visitor.save().catch(err => {
+      await visitor.save().catch((err) => {
         Logger.saveLog("MongoDB Save Error", "error", err);
       });
 
       Logger.debug("✅ Visitor info saved");
-      return res.json({message: "Hello"})
+      return res.json({ message: "Hello" });
     } catch (error) {
       Logger.saveLog("handleRoutes Error", "error", error);
       return res.status(500).send("Internal Server Error");
     }
   }
 
+  async Visitors(req, res) {
+    try {
+      var allVisitors = await Visitor.find({});
+      if (!allVisitors) {
+        return res
+          .status(404)
+          .json({ success: false, message: "No visitors found" });
+      }
+
+      var visitors = allVisitors.map((visitor) => ({
+        ip: visitor.ip,
+        city: visitor.city,
+        region: visitor.region,
+        country: visitor.country,
+        timezone: visitor.timezone,
+        isp: visitor.isp,
+        lat: visitor.lat,
+        lon: visitor.lon,
+        device: {
+          browser: visitor.device.browser,
+          os: visitor.device.os,
+          type: visitor.device.type,
+          vendor: visitor.device.vendor,
+        },
+        timestamp: visitor.timestamp,
+      }));
+
+      // reverse the order of visitors
+      visitors = visitors.reverse();
+
+      res.status(200).json({ success: true, visitors });
+    } catch (error) {
+      Logger.saveLog("Visitors Error", "error", error);
+      res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
+    }
+  }
+
   async addLead(req, res) {
     try {
       const { name, number } = req.body;
-  
+
       if (!name || !number) {
-        return res.status(400).json({ success: false, message: "Name and number are required" });
+        return res
+          .status(400)
+          .json({ success: false, message: "Name and number are required" });
       }
-  
+
       const timestamp = this.convertToIST();
-  
+
       const lead = new Lead({
         name,
         number,
@@ -147,17 +200,18 @@ class APP extends SERVER {
         createdAt: timestamp,
         updatedAt: timestamp,
       });
-  
+
       await lead.save();
-  
+
       Logger.debug("✅ Lead saved successfully");
       return res.status(200).json({ success: true, message: "Lead saved" });
     } catch (error) {
       Logger.saveLog("addLead Error", "error", error);
-      return res.status(500).json({ success: false, message: "Internal Server Error" });
+      return res
+        .status(500)
+        .json({ success: false, message: "Internal Server Error" });
     }
   }
-  
 
   // Fetch IP information using an external API (ip-api)
   async fetchIpInfo(ip) {
